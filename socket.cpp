@@ -294,14 +294,6 @@ int main(int argc, char const *argv[]){
 		getError("Error in listen()");
 	}
 
-	// arrumar essa função ↓
-	//	if((getsockname(fd_server, (struct sockaddr *)sockaddr_client2, len_server) == -1)){
-	//		free(len_server);
-	//		free(sockaddr_server);
-	//		getError("Error in getsockname()\n");
-	//	}
-	//	printf("Socket Name: %s:%d\n", inet_ntoa(sockaddr_client2->sin_addr), ntohs(sockaddr_client2->sin_port));
-	//	printf("len : %d\n", *(len_server));
 
 	/**
 	 * @brief Inicializa as devidas estruturas do client1
@@ -347,18 +339,18 @@ int main(int argc, char const *argv[]){
 		getError("Error in accept()");
 	}
 
-	//----------- Jeito mais bonitinho -----------
-	struct sockaddr_in *clients[NUM_CLIENTS];
-	socklen_t *len_clients[NUM_CLIENTS];
-	
-	for(int i=0; i<NUM_CLIENTS; i++){
-		clients[i] = (struct sockaddr_in *)calloc(1, sizeof(struct sockaddr_in));
-		len_clients[i] = (socklen_t *)malloc(sizeof(socklen_t));
-
-		// captar o erro disso ↓
-		accept(fd_server, (struct sockaddr *)clients[i], len_clients[i]);
-	}
-	//-------------------------------------------
+	////----------- Jeito mais bonitinho -----------
+	//struct sockaddr_in *clients[NUM_CLIENTS];
+	//socklen_t *len_clients[NUM_CLIENTS];
+	//
+	//for(int i=0; i<NUM_CLIENTS; i++){
+	//	clients[i] = (struct sockaddr_in *)calloc(1, sizeof(struct sockaddr_in));
+	//	len_clients[i] = (socklen_t *)malloc(sizeof(socklen_t));
+	//
+	//	// captar o erro disso ↓
+	//	accept(fd_server, (struct sockaddr *)clients[i], len_clients[i]);
+	//}
+	////-------------------------------------------
 
 	// socket pronto
 	// read()
