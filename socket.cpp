@@ -185,8 +185,9 @@ int main(int argc, char const *argv[]){
 	socklen_t *len_client1, *len_client2;
 	
 	int fd_server, fd_client1, fd_client2; // Files descriptors
-
 	void **vec_addr; //montar o vetor e passar pra função
+	
+	char buffer[255]; //Explicar isso, pode mudar se quiser
 
 	/**
 	 * @brief :	socket(domain, type, protocol)
@@ -294,7 +295,6 @@ int main(int argc, char const *argv[]){
 		getError("Error in listen()");
 	}
 
-
 	/**
 	 * @brief Inicializa as devidas estruturas do client1
 	 */
@@ -321,6 +321,9 @@ int main(int argc, char const *argv[]){
 		getError("Error in accept()");
 	}
 	
+	getInformation(fd_client1);
+
+
 	/**
 	 * @brief  Inicializa as devidas estruturas do client2
 	 * 
@@ -331,13 +334,16 @@ int main(int argc, char const *argv[]){
 	/**
 	 * @brief	Aceita a conexão do client 2
 	 */
-	if((fd_client1 = accept(fd_server, (struct sockaddr*) addr_client2, len_client2)) == 0){
+	if((fd_client2 = accept(fd_server, (struct sockaddr*) addr_client2, len_client2)) == 0){
 		free(len_server);
 		free(sockaddr_server);
-		free(addr_client1);
-		free(len_client1);
+		free(addr_client2);
+		free(len_client2);
 		getError("Error in accept()");
 	}
+
+	getInformation(fd_client2);
+
 
 	////----------- Jeito mais bonitinho -----------
 	//struct sockaddr_in *clients[NUM_CLIENTS];
