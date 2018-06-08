@@ -344,6 +344,7 @@ int main(int argc, char const *argv[]){
 
 	getInformation(fd_client2);
 
+	//if(connect(fd_server, ))
 
 	////----------- Jeito mais bonitinho -----------
 	//struct sockaddr_in *clients[NUM_CLIENTS];
