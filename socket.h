@@ -60,8 +60,10 @@ class Socket{
         void acceptClients();
         void closeSocket();
         void __free(bool exists_clients = true);
+        void readMsg();
+        void writeMsg();
 
-        void Oi();
+        void Oi(); // ← APAGAR ESSE CU
 };
 
 void getInformation(int);

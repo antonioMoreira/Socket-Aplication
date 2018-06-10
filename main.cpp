@@ -5,7 +5,7 @@
 
 
 int main(int argc, char const *argv[]){
-    Socket socket(55555,2);
+    Socket socket(9898,1);
     
     getInformation(socket.getFdSocket());
     socket.acceptClients();

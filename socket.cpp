@@ -155,6 +155,11 @@ void Socket::closeSocket(){
 	}
 }
 
+void Socket::readMsg(){
+
+
+}
+
 void Socket::Oi(){
 	printf("Oiiiiiii");
 	
