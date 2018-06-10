@@ -78,8 +78,8 @@
 		$ netstat
 		$ ifconfig
 		$ telnet (?)
-		$ /etc/init.d/network-mannager [OPTION]
 		$ networkctl [OPTION]
+		$ /etc/init.d/network-mannager [OPTION] ↑ através do networkctl
 		
 	» Scan de Rede
 		$ wireshark
@@ -94,22 +94,8 @@
 
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "socket.h"
 
-#include <sys/socket.h>
-#include <sys/types.h> // acho que nao precisa deste include
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <errno.h>
-
-#define PORT 65535 // passar porta por argv ?
-#define SOCKET_PATH '/home/antonio/Documents/Redes (Kalinka)/Trabalho' // pode usar pwd() na fç?
-#define NUM_CLIENTS 2
-
-#define EXIT_SUCCESS 0
-#define EXIT_FAILURE 1
 
 /**
  * @brief Função para informar corretamente o erro encontrado, 
@@ -121,73 +107,101 @@ void getError(const char *msg){
 	exit(EXIT_FAILURE); // Finaliza o processo
 }
 
+
 /**
- * @brief	Função recebe um vetor de endereços para
- * 			dar free()
+ * @brief : Função libera todos os endereços alocados por Socket
  * 
- * @param vec_addr : vetor de endereços
- * @param size_vec : tamanho do vetor
+ * @param exists_clients : verifica se existem clients a serem liberados 
  */
-void __free(void **vec_addr, int size_vec){
-	for(int i=0; i<size_vec; i++)
-		free((void*)vec_addr[i]);	
+void Socket::__free(bool exists_clients){
+	if(exists_clients){
+		for(int i=0; i<nclients;i++){
+			if(add_clients[i] != NULL){
+				free(add_clients[i]);
+			}
+		}
+		free(len_clients);
+		free(fd_clients);
+		free(add_clients);
+	}
+
+	free(buffer);
+	free(add_socket);
 }
+
 
 void getInformation(int fd){
 	struct sockaddr_in aux;
 	socklen_t len_aux = sizeof(struct sockaddr_in);
 
-	getsockname(fd, (struct sockaddr *)&aux, &len_aux);
+	if(getsockname(fd, (struct sockaddr *)&aux, &len_aux) == -1){
+		getError("Error in getsockname()");
+	}
 	
 	printf("Socket Name: %s:%d\n", inet_ntoa(aux.sin_addr), ntohs(aux.sin_port));
 	printf("len : %d\n", len_aux);
 }
 
-/**
- * @brief
- * 		Argument counter (argc) & Argument Vector (argv)
- * 		
- * @param argc :	Armazena o numero de argumentos passados.
- * 					1 (default) : nome do binário.
- * 
- * @param argv :	Armazena os valores dos argumentos passados em um vetor < const char * >.
- * 					(!) cons char * : é read-only variable.
- * 
- * @return int 
- */
-int main(int argc, char const *argv[]){
-	/**
-	 * @brief Struct que descreve um socket IPv4 em <in.h> (16 Bytes)
-	 * 
-	 *  'Herda' a struct sockaddr que descreve um socket address generico com (16 Bytes) <bits/socket.h> <sys/socket.h>
-	 * 		herda __SOCKADDR_COMMON de <sockaddr.h> (ou ele pega )
-	 * 		unsigned short int sockaddr.sa_family;	« Especifica a familia do endereço (unsigned short int)
-	 * 		char sockaddr.sa_data[14];		« 14 Bytes of protocol address 
-	 * 
-	 * 	Em sockaddr_in:
-	 * 			» in_port_t sin_port; (unisgned short int em <_stdint.h>)
-	 * 				função hlens(PORT_NUMBER) usada para converter no devido formato			
-	 * 	
-	 * 			» struct in_addr sin_addr; struct definida em <in.h>
-	 * 				Internet Address:
-	 * 				typedef uint32_t in_addr_t; (unsigned int) <_stdint.h>
-	 * 				struct in_addr{ in_addr_t s_addr; };
-	 * 			
-	 * 			» sockaddr_in.zeros; Bom costume inicializar com zeros, por isso o calloc()
-	 * 			
-	 * 			(!) Endereço e porta são armzenados em Network Byte Order (NBO)
-	 */
-	struct sockaddr_in *sockaddr_server = (struct sockaddr_in *)calloc(1, sizeof(sockaddr_in)); 
-	struct sockaddr_in *addr_client1, *addr_client2;
 
-	//nao precisa ser alocado acho
-	socklen_t *len_server = (socklen_t *)calloc(1, sizeof(socklen_t)); 
-	socklen_t *len_client1, *len_client2;
+int Socket::getFdSocket() {
+	return fd_socket;
+}
+
+
+void Socket::closeSocket(){
+	if(shutdown(fd_socket, SHUT_RDWR) == -1){
+		__free();
+		getError("Error in listen()");
+	}
+}
+
+void Socket::Oi(){
+	printf("Oiiiiiii");
 	
-	int fd_server, fd_client1, fd_client2; // Files descriptors
-	void **vec_addr; //montar o vetor e passar pra função
-	
-	char buffer[255]; //Explicar isso, pode mudar se quiser
+}
+
+
+/**
+ * @brief :	Função, primeiramente, inicializa as devidas estruturas dos clients, 
+ * 			específicada pela variável 'nclients', aguarda a conexão no socket
+ * 			para todos os clients e, por fim, exibe a informação de cada endereço.
+ * 
+ */
+void Socket::acceptClients(){
+	// non bloking
+	add_clients = (struct sockaddr_in **)malloc(sizeof(struct sockaddr_in *)*nclients);
+	len_clients = (socklen_t *)malloc(sizeof(socklen_t)*nclients);
+	fd_clients = (int *)malloc(sizeof(int)*nclients);
+
+	for(int i=0; i<nclients; i++){
+		add_clients[i] = (struct sockaddr_in *)calloc(1, sizeof(struct sockaddr_in));
+		len_clients[i]=sizeof(struct sockaddr_in);
+
+		/**
+		 * @brief	accept(fd, sockaddr *, socklen_t *)
+		 * 			Função para aceitar a conexão em um socket.
+		 * 			Neste caso, aceita a conexão do primeiro client.
+		 * 
+		 * @param int fd :
+		 * 
+		 * @param sockaddr * :
+		 * 
+		 * @param socklen_t * :
+		 * 			
+		 */
+		if((fd_clients[i] = accept(fd_socket, (struct sockaddr *)add_clients[i], &(len_clients[i]))) == -1){
+			closeSocket();
+			getError("Error in accept()");
+		}
+
+		printf("Fd client[%d]: %d\n",i, fd_clients[i]);
+		getInformation(fd_clients[i]);
+	}
+}
+
+
+Socket::Socket(int port, int nclients){
+	add_socket = (struct sockaddr_in *)calloc(1, sizeof(sockaddr_in));
 
 	/**
 	 * @brief :	socket(domain, type, protocol)
@@ -231,14 +245,14 @@ int main(int argc, char const *argv[]){
 	 * 		Neste último caso, getError() é invocada para obter mais informações do erro,
 	 * 		além disso, todos os ponteiros são devidamente liberados.
 	 */
-	if((fd_server = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1){ 
-		free(len_server);
-		free(sockaddr_server);
+	if((fd_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1){ 
+		__free(false);
 		getError("Error in socket()\n");
-	}
+	}	
 
-	// Tem gente que faz a verificação se fd_server > 0 não sei se precisa
-	printf("fd_svr: %d\n", fd_server);
+	printf("fd server: %d\n", fd_socket);
+
+	this->port = port;
 
 	/**
 	 * @brief Configuração do socket
@@ -255,9 +269,9 @@ int main(int argc, char const *argv[]){
 	 * 		Config3:	Para especificar a porta de comunicação do socket
 	 * 					htons() é usada para converter para NBO			
 	 */
-	sockaddr_server->sin_addr.s_addr = INADDR_ANY; // Config1
-	sockaddr_server->sin_family = AF_INET;		   // Config2
-	sockaddr_server->sin_port = htons(PORT);	   // Config3
+	add_socket->sin_addr.s_addr = INADDR_ANY; // Config1
+	add_socket->sin_family = AF_INET;		  // Config2
+	add_socket->sin_port = htons(port);	   	  // Config3
 
 	/**
 	 * @brief : bind(fd, sockaddr *, sockaddr_len)
@@ -275,11 +289,12 @@ int main(int argc, char const *argv[]){
 	 * 
 	 * @param unsigned int sockaddr_len : Tamanho da struct usada pelo formato em questão
 	 */
-	if(bind(fd_server, (struct sockaddr *) sockaddr_server, (unsigned int)sizeof(struct sockaddr_in)) == -1){
-		free(len_server);
-		free(sockaddr_server);
+	if(bind(fd_socket, (struct sockaddr *) add_socket, (unsigned int)sizeof(struct sockaddr_in)) == -1){
+		__free(false);
 		getError("Error in bind()\n");
 	}
+
+	this->nclients = nclients;
 
 	/**
 	 * @brief : listen(fd, n)
@@ -287,93 +302,15 @@ int main(int argc, char const *argv[]){
 	 * @param int fd : file descriptor do soccket gerado
 	 * 
 	 * @param int n : numero de conexoes que o sistema pode segurar por vez.
-	 * 				  Neste programa, o socket pode gerenciar 2 conexões.
+	 * 				  Se n=2, por exemplo, o socket pode segurar duas conexões
+	 * 				  ao mesmo tempo.
 	 */
-	if(listen(fd_server, 2) == -1){
-		free(len_server);
-		free(sockaddr_server);
+	if(listen(fd_socket, nclients) == -1){
+		__free(false);
 		getError("Error in listen()");
 	}
 
-	/**
-	 * @brief Inicializa as devidas estruturas do client1
-	 */
-	addr_client1 = (struct sockaddr_in *)calloc(1, sizeof(struct sockaddr_in));
-	len_client1 = (socklen_t *)malloc(sizeof(socklen_t));
-	
-	/**
-	 * @brief :	accept(fd, sockeddr *, socklen_t *)
-	 * 			Função para aceitar a conexão em um socket.
-	 * 			Neste caso, aceita a conexão do primeiro client.			
-	 * 
-	 * @param int fd : 
-	 * 
-	 * @param sockaddr :
-	 * 
-	 * @param socklen_t * : 
-	 * 
-	 */
-	if((fd_client1 = accept(fd_server, (struct sockaddr*) addr_client1, len_client1)) == 0){
-		free(len_server);
-		free(sockaddr_server);
-		free(addr_client1);
-		free(len_client1);
-		getError("Error in accept()");
-	}
-	
-	getInformation(fd_client1);
+	buffer = (char *)calloc(255,sizeof(char));
 
-
-	/**
-	 * @brief  Inicializa as devidas estruturas do client2
-	 * 
-	 */
-	addr_client2 = (struct sockaddr_in *)calloc(1, sizeof(struct sockaddr_in));
-	len_client2 = (socklen_t *)malloc(sizeof(socklen_t));
-	
-	/**
-	 * @brief	Aceita a conexão do client 2
-	 */
-	if((fd_client2 = accept(fd_server, (struct sockaddr*) addr_client2, len_client2)) == 0){
-		free(len_server);
-		free(sockaddr_server);
-		free(addr_client2);
-		free(len_client2);
-		getError("Error in accept()");
-	}
-
-	getInformation(fd_client2);
-
-	//if(connect(fd_server, ))
-
-	////----------- Jeito mais bonitinho -----------
-	//struct sockaddr_in *clients[NUM_CLIENTS];
-	//socklen_t *len_clients[NUM_CLIENTS];
-	//
-	//for(int i=0; i<NUM_CLIENTS; i++){
-	//	clients[i] = (struct sockaddr_in *)calloc(1, sizeof(struct sockaddr_in));
-	//	len_clients[i] = (socklen_t *)malloc(sizeof(socklen_t));
-	//
-	//	// captar o erro disso ↓
-	//	accept(fd_server, (struct sockaddr *)clients[i], len_clients[i]);
-	//}
-	////-------------------------------------------
-
-	// socket pronto
-	// read()
-	// write()
-	// USAR recvmmsg() E sendvmmsg()!
-
-
-
-	if(shutdown(fd_server, SHUT_RDWR) == -1){
-		//Dar free nos clients tbm
-		free(len_server);
-		free(sockaddr_server);
-		getError("Error in listen()");
-	}
-
-	free(len_server);
-	free(sockaddr_server);
-	exit(EXIT_SUCCESS);
+	printf("Socket criado...\n");
 }
