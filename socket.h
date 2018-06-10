@@ -61,6 +61,7 @@ class Socket{
 		char buffer[256];
         
 		Socket(int, in_addr_t addr = INADDR_ANY, bool doBind = false);
+
         
 		int getFdSocket();
         int *getFdClients();

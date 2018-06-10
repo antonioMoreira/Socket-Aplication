@@ -5,12 +5,12 @@
 
 
 int main(int argc, char const *argv[]){
-    Socket socket(9897, true);
-    socket.acceptClients(1);
+    Socket socket(9898, INADDR_ANY, true);
+    socket.acceptClients(5);
 
     readMsg(socket.getFdSocket(), socket.buffer);
     
-    writeMsg(socket.getFdSocket(), socket.buffer);
+    //writeMsg(socket.getFdSocket(), socket.buffer);
 
     socket.closeSocket();
 

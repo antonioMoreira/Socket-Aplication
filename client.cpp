@@ -8,18 +8,16 @@
 //https://msdn.microsoft.com/en-us/library/windows/desktop/ms738552(v=vs.85).aspx
 
 int main(int argc, char const *argv[]){
-    int sockfd, portnb = 9897;
     struct hostent *server; //colocar em socket
     struct sockaddr_in *addr_server = (struct sockaddr_in *)calloc(1,sizeof(struct sockaddr_in));
     char buffer[256];
-
 
     if((server = gethostbyname("172.26.146.8")) == NULL){
         printf("ERRO");
     }
 
     
-    Socket s_client(9897, addr_server->sin_addr.s_addr);
+    Socket s_client(9898, addr_server->sin_addr.s_addr, false);
 
     //sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     //if(sockfd == -1){
@@ -43,9 +41,8 @@ int main(int argc, char const *argv[]){
     //    return -1;
     //}
 
-    printf("Digite msg:\n");
     writeMsg(s_client.getFdSocket(), s_client.buffer);
-    readMsg(s_client.getFdSocket(), s_client.buffer);
+    //readMsg(s_client.getFdSocket(), s_client.buffer);
 
     //bzero(buffer, 256);
 
