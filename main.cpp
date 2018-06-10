@@ -9,14 +9,11 @@ int main(int argc, char const *argv[]){
     
     getInformation(socket.getFdSocket());
     socket.acceptClients();
-    socket.Oi();
 
+    writeMsg(socket.getFdSocket(), socket.buffer);
 
-    int a = 0;
-    while(a != 1){
-        printf("%d", a);
-        scanf("%d", &a);
-    }
+    
+
 
     socket.closeSocket();
 

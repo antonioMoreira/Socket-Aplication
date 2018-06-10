@@ -11,6 +11,8 @@
 #include <arpa/inet.h>
 #include <errno.h>
 
+//Biblios que fogem um pouco do negocio ↓ (que tem tudo na socket.h)
+#include <netdb.h> //tentar tirar e colocar gethostbyaddr
 #include <unistd.h> // Tirar essa biblio e substitui por alguma do socket.h se der
 // essa biblio é pra usar a write e a read, mas a socket tem fç pra isso, então tem que mudar.
 
@@ -54,10 +56,9 @@ class Socket{
         int *fd_clients;
         int nclients, port;
     public:
-        char *buffer;
-
-    public:
-        Socket(int, int);
+		char *buffer;
+        
+		Socket(int, int);
         int getFdSocket();
         int *getFdClients();
         void acceptClients();
@@ -65,6 +66,9 @@ class Socket{
         void __free(bool exists_clients = true);
 };
 
+
+void writeMsg(int, char *);
+void readMsg(int, char *);
 void getInformation(int);
 
 

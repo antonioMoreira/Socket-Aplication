@@ -140,6 +140,7 @@ void getInformation(int fd){
 	
 	printf("Socket Name: %s:%d\n", inet_ntoa(aux.sin_addr), ntohs(aux.sin_port));
 	printf("len : %d\n", len_aux);
+
 }
 
 
@@ -156,7 +157,7 @@ void Socket::closeSocket(){
 }
 
 
-void Socket::readMsg(int fd){
+void readMsg(int fd, char *buffer){
 	int n;
 	if((n = read(fd, buffer, sizeof(buffer))) == -1)
 		getError("Error in read()");
@@ -167,7 +168,7 @@ void Socket::readMsg(int fd){
 
 
 
-void Socket::writeMsg(int fd){
+void writeMsg(int fd, char *buffer){
 	int n;
 	char msg[255];
 
