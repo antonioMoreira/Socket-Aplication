@@ -155,14 +155,31 @@ void Socket::closeSocket(){
 	}
 }
 
-void Socket::readMsg(){
 
-
+void Socket::readMsg(int fd){
+	int n;
+	if((n = read(fd, buffer, sizeof(buffer))) == -1)
+		getError("Error in read()");
+	
+	printf("%d bytes read from buffer\n", n);
+	printf("Msg: %s\n", buffer);
 }
 
-void Socket::Oi(){
-	printf("Oiiiiiii");
-	
+
+
+void Socket::writeMsg(int fd){
+	int n;
+	char msg[255];
+
+	scanf("%s", msg);
+	memcpy(buffer, &msg, strlen(msg)); 
+	//	acho que não é uma boa prática escrever direto no buffer, além disso
+	//	não precisa ficar zerando toda hora o buffer, ACHO
+
+	if((n = write(fd, buffer, sizeof(buffer))))
+		getError("Error in write()");
+
+	printf("%d bytes write on buffer");
 }
 
 
