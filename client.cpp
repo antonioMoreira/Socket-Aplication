@@ -37,7 +37,6 @@ int main(int argc, char const *argv[]){
     printf("Digite msg:\n");
     bzero(buffer, 256);
 
-
     int n = write(sockfd, "oi", strlen("oi"));
     printf("write: %d\n", n);
 

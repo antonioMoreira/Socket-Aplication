@@ -160,8 +160,6 @@ void Socket::closeSocket(){
 void readMsg(int fd, char *buffer){
 	int n;
 	
-	bzero(buffer, 256);
-
 	if((n = read(fd, buffer, 255)) == -1)
 		getError("Error in read()");
 	
