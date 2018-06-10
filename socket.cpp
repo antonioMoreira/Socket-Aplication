@@ -159,7 +159,10 @@ void Socket::closeSocket(){
 
 void readMsg(int fd, char *buffer){
 	int n;
-	if((n = read(fd, buffer, sizeof(buffer))) == -1)
+	
+	bzero(buffer, 256);
+
+	if((n = read(fd, buffer, 255)) == -1)
 		getError("Error in read()");
 	
 	printf("%d bytes read from buffer\n", n);
@@ -170,8 +173,9 @@ void readMsg(int fd, char *buffer){
 
 void writeMsg(int fd, char *buffer){
 	int n;
-	char msg[255];
+	char msg[256];
 
+	//getchar();
 	scanf("%s", msg);
 	memcpy(buffer, &msg, strlen(msg)); 
 	//	acho que não é uma boa prática escrever direto no buffer, além disso
@@ -180,7 +184,7 @@ void writeMsg(int fd, char *buffer){
 	if((n = write(fd, buffer, sizeof(buffer))))
 		getError("Error in write()");
 
-	printf("%d bytes write on buffer");
+	printf("%d bytes write on buffer\n", n);
 }
 
 
@@ -333,7 +337,8 @@ Socket::Socket(int port, int nclients){
 		getError("Error in listen()");
 	}
 
-	buffer = (char *)calloc(255,sizeof(char));
+	buffer = (char *)calloc(256,sizeof(char));
+	bzero(buffer, 256);
 
 	printf("Socket criado...\n");
 }

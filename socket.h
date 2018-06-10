@@ -12,9 +12,11 @@
 #include <errno.h>
 
 //Biblios que fogem um pouco do negocio ↓ (que tem tudo na socket.h)
+#include <strings.h>
 #include <netdb.h> //tentar tirar e colocar gethostbyaddr
 #include <unistd.h> // Tirar essa biblio e substitui por alguma do socket.h se der
 // essa biblio é pra usar a write e a read, mas a socket tem fç pra isso, então tem que mudar.
+
 
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1

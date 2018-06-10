@@ -1,7 +1,8 @@
-all: socket.o main.o compile clean
+all: socket.o main.o client.o compile clean
 
 compile:
-	@g++ *.o -o exe
+	@g++ socket.o main.o -o exe
+	@g++ socket.o client.o -o exe2
 
 fullcompile:
 	@g++ socket.o main.o -o exe  -g -Wall
@@ -9,11 +10,17 @@ fullcompile:
 main.o:
 	@g++ -c main.cpp
 
+client.o:
+	@g++ -c client.cpp
+
 socket.o:
 	@g++ -c socket.cpp
 
-run:
+run1:
 	./exe
+
+run2:
+	./exe2
 
 fullrun:
 	valgrind -v --track-origins=yes --leak-check=full --show-leak-kinds=all ./exe

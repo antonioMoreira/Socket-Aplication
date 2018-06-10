@@ -5,15 +5,14 @@
 
 
 int main(int argc, char const *argv[]){
-    Socket socket(9898,1);
+    Socket socket(9897,1);
     
     getInformation(socket.getFdSocket());
     socket.acceptClients();
 
-    writeMsg(socket.getFdSocket(), socket.buffer);
-
+    readMsg(socket.getFdSocket(), socket.buffer);
     
-
+    writeMsg(socket.getFdSocket(), socket.buffer);
 
     socket.closeSocket();
 
