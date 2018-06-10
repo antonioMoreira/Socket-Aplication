@@ -1,8 +1,8 @@
 all: socket.o main.o client.o compile clean
 
 compile:
-	@g++ socket.o main.o -o exe
-	@g++ socket.o client.o -o exe2
+	@g++ socket.o main.o -o exe -g -Wall
+	@g++ socket.o client.o -o exe2 -g -Wall
 
 fullcompile:
 	@g++ socket.o main.o -o exe  -g -Wall

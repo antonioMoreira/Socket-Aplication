@@ -5,10 +5,8 @@
 
 
 int main(int argc, char const *argv[]){
-    Socket socket(9897,1);
-    
-    getInformation(socket.getFdSocket());
-    socket.acceptClients();
+    Socket socket(9897, true);
+    socket.acceptClients(1);
 
     readMsg(socket.getFdSocket(), socket.buffer);
     

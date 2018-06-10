@@ -1,12 +1,3 @@
-/**
- * @brief Programa cria um socket simples.
- * 
- * @file socket.cpp
- * @author Antonio Moreira
- * @date 2018-06-02
- */
-
-
 /*
 	IPv4: Endereçamento de 32bits (RFC 791 and RFC 1122)
 		(!) Explicar todo o header do ipv4 (14 campos, sendo 13 obrigatórios)
@@ -125,7 +116,6 @@ void Socket::__free(bool exists_clients){
 		free(add_clients);
 	}
 
-	free(buffer);
 	free(add_socket);
 }
 
@@ -140,7 +130,6 @@ void getInformation(int fd){
 	
 	printf("Socket Name: %s:%d\n", inet_ntoa(aux.sin_addr), ntohs(aux.sin_port));
 	printf("len : %d\n", len_aux);
-
 }
 
 
@@ -159,10 +148,12 @@ void Socket::closeSocket(){
 
 void readMsg(int fd, char *buffer){
 	int n;
-	
+
 	if((n = read(fd, buffer, 255)) == -1)
 		getError("Error in read()");
 	
+	bzero(buffer, 256);
+
 	printf("%d bytes read from buffer\n", n);
 	printf("Msg: %s\n", buffer);
 }
@@ -173,16 +164,21 @@ void writeMsg(int fd, char *buffer){
 	int n;
 	char msg[256];
 
-	//getchar();
 	scanf("%s", msg);
 	memcpy(buffer, &msg, strlen(msg)); 
+	//fgets(buffer,255,stdin);
+	
 	//	acho que não é uma boa prática escrever direto no buffer, além disso
 	//	não precisa ficar zerando toda hora o buffer, ACHO
-
 	if((n = write(fd, buffer, sizeof(buffer))))
 		getError("Error in write()");
 
 	printf("%d bytes write on buffer\n", n);
+}
+
+
+sockaddr_in *Socket::getAddrSocket(){
+	return add_socket;
 }
 
 
@@ -192,11 +188,26 @@ void writeMsg(int fd, char *buffer){
  * 			para todos os clients e, por fim, exibe a informação de cada endereço.
  * 
  */
-void Socket::acceptClients(){
-	// non bloking
+void Socket::acceptClients(int nclients){
 	add_clients = (struct sockaddr_in **)malloc(sizeof(struct sockaddr_in *)*nclients);
 	len_clients = (socklen_t *)malloc(sizeof(socklen_t)*nclients);
 	fd_clients = (int *)malloc(sizeof(int)*nclients);
+	
+	this->nclients = nclients;
+
+	/**
+	 * @brief : listen(fd, n)
+	 * 
+	 * @param int fd : file descriptor do soccket gerado
+	 * 
+	 * @param int n : numero de conexoes que o sistema pode segurar por vez.
+	 * 				  Se n=2, por exemplo, o socket pode segurar duas conexões
+	 * 				  ao mesmo tempo.
+	 */
+	if(listen(fd_socket, nclients) == -1){
+		__free(false);
+		getError("Error in listen()");
+	}
 
 	for(int i=0; i<nclients; i++){
 		add_clients[i] = (struct sockaddr_in *)calloc(1, sizeof(struct sockaddr_in));
@@ -225,8 +236,9 @@ void Socket::acceptClients(){
 }
 
 
-Socket::Socket(int port, int nclients){
+Socket::Socket(int port, in_addr_t addr, bool doBind){
 	add_socket = (struct sockaddr_in *)calloc(1, sizeof(sockaddr_in));
+	bzero(buffer, 256);
 
 	/**
 	 * @brief :	socket(domain, type, protocol)
@@ -294,49 +306,33 @@ Socket::Socket(int port, int nclients){
 	 * 		Config3:	Para especificar a porta de comunicação do socket
 	 * 					htons() é usada para converter para NBO			
 	 */
-	add_socket->sin_addr.s_addr = INADDR_ANY; // Config1
-	add_socket->sin_family = AF_INET;		  // Config2
-	add_socket->sin_port = htons(port);	   	  // Config3
+	add_socket->sin_addr.s_addr = addr; 	// Config1
+	add_socket->sin_family = AF_INET;		// Config2
+	add_socket->sin_port = htons(port);	   	// Config3
 
-	/**
-	 * @brief : bind(fd, sockaddr *, sockaddr_len)
-	 * 	Dá ao socket um endereço (address). Se outros processos desejarem se comunicar com
-	 * 	ele, deverão conhecer o endereço:
-	 * 		Socket <--> local interface address.
-	 * 
-	 * 	(!) Pare recuperar o nome (address) : getsockname();
-	 * 
-	 * @param int fd : file descriptor recebido quando o socket foi criado pela função socket().
-	 * 
-	 * @param sockaddr : Cada sockaddr tem sua struct dependendo do formato utilizdo,
-	 * 					 por isso o cast para o sockaddr genérico.
-	 * 					 Neste caso foi utilizado o IPv4. Ver a definição a struct sockaddr em questão!
-	 * 
-	 * @param unsigned int sockaddr_len : Tamanho da struct usada pelo formato em questão
-	 */
-	if(bind(fd_socket, (struct sockaddr *) add_socket, (unsigned int)sizeof(struct sockaddr_in)) == -1){
-		__free(false);
-		getError("Error in bind()\n");
+	if(doBind){
+		/**
+		 * @brief : bind(fd, sockaddr *, sockaddr_len)
+		 * 	Dá ao socket um endereço (address). Se outros processos desejarem se comunicar com
+		 * 	ele, deverão conhecer o endereço:
+		 * 		Socket <--> local interface address.
+		 * 
+		 * 	(!) Pare recuperar o nome (address) : getsockname();
+		 * 
+		 * @param int fd : file descriptor recebido quando o socket foi criado pela função socket().
+		 * 
+		 * @param sockaddr : Cada sockaddr tem sua struct dependendo do formato utilizdo,
+		 * 					 por isso o cast para o sockaddr genérico.
+		 * 					 Neste caso foi utilizado o IPv4. Ver a definição a struct sockaddr em questão!
+		 * 
+		 * @param unsigned int sockaddr_len : Tamanho da struct usada pelo formato em questão
+		 */
+		if(bind(fd_socket, (struct sockaddr *) add_socket, (unsigned int)sizeof(struct sockaddr_in)) == -1){
+			__free(false);
+			getError("Error in bind()\n");
+		}
+		printf("Bind realisado...\n");
 	}
-
-	this->nclients = nclients;
-
-	/**
-	 * @brief : listen(fd, n)
-	 * 
-	 * @param int fd : file descriptor do soccket gerado
-	 * 
-	 * @param int n : numero de conexoes que o sistema pode segurar por vez.
-	 * 				  Se n=2, por exemplo, o socket pode segurar duas conexões
-	 * 				  ao mesmo tempo.
-	 */
-	if(listen(fd_socket, nclients) == -1){
-		__free(false);
-		getError("Error in listen()");
-	}
-
-	buffer = (char *)calloc(256,sizeof(char));
-	bzero(buffer, 256);
 
 	printf("Socket criado...\n");
 }

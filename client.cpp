@@ -11,7 +11,6 @@ int main(int argc, char const *argv[]){
     int sockfd, portnb = 9897;
     struct hostent *server; //colocar em socket
     struct sockaddr_in *addr_server = (struct sockaddr_in *)calloc(1,sizeof(struct sockaddr_in));
-    
     char buffer[256];
 
 
@@ -19,33 +18,46 @@ int main(int argc, char const *argv[]){
         printf("ERRO");
     }
 
-    sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if(sockfd == -1){
-        printf("erro");
-        return -1;
+    
+    Socket s_client(9897, addr_server->sin_addr.s_addr);
+
+    //sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    //if(sockfd == -1){
+    //    printf("erro");
+    //    return -1;
+    //}
+    //
+    //addr_server->sin_family = AF_INET;
+    //bcopy((char *)server->h_addr, (char *)&addr_server->sin_addr.s_addr, server->h_length);
+    //addr_server->sin_port = htons(portnb);
+    //
+
+
+    if(connect(s_client.getFdSocket(), (struct sockaddr *)s_client.getAddrSocket(), sizeof(struct sockaddr_in)) == -1){
+        printf("Erro conncet(): %d", errno);
+        return -1;        
     }
 
-    addr_server->sin_family = AF_INET;
-    bcopy((char *)server->h_addr, (char *)&addr_server->sin_addr.s_addr, server->h_length);
-    addr_server->sin_port = htons(portnb);
-    
-    if(connect(sockfd, (struct sockaddr *)addr_server, sizeof(struct sockaddr))){
-        printf("erro");
-        return -1;
-    }
+    //if(connect(sockfd, (struct sockaddr *)addr_server, sizeof(struct sockaddr))){
+    //    printf("erro");
+    //    return -1;
+    //}
 
     printf("Digite msg:\n");
-    bzero(buffer, 256);
+    writeMsg(s_client.getFdSocket(), s_client.buffer);
+    readMsg(s_client.getFdSocket(), s_client.buffer);
 
-    int n = write(sockfd, "oi", strlen("oi"));
-    printf("write: %d\n", n);
+    //bzero(buffer, 256);
 
-    bzero(buffer, 256);
+    //int n = write(sockfd, "oi", strlen("oi"));
+    //printf("write: %d\n", n);
 
-    n = read(sockfd, buffer, 255);
-    printf("read: %d\n", n);
+    //bzero(buffer, 256);
 
-    printf("buffer: %s\n", buffer);
+    //n = read(sockfd, buffer, 255);
+    //printf("read: %d\n", n);
+
+    //printf("buffer: %s\n", buffer);
 
     return 0;
 }

@@ -58,14 +58,16 @@ class Socket{
         int *fd_clients;
         int nclients, port;
     public:
-		char *buffer;
+		char buffer[256];
         
-		Socket(int, int);
-        int getFdSocket();
+		Socket(int, in_addr_t addr = INADDR_ANY, bool doBind = false);
+        
+		int getFdSocket();
         int *getFdClients();
-        void acceptClients();
+        void acceptClients(int);
         void closeSocket();
         void __free(bool exists_clients = true);
+		sockaddr_in *getAddrSocket();
 };
 
 
@@ -73,5 +75,6 @@ void writeMsg(int, char *);
 void readMsg(int, char *);
 void getInformation(int);
 
+void getError();
 
 #endif
