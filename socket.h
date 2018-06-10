@@ -53,7 +53,7 @@ class Socket{
         int fd_socket;
         int *fd_clients;
         int nclients, port;
-
+    public:
         char *buffer;
 
     public:
@@ -63,8 +63,6 @@ class Socket{
         void acceptClients();
         void closeSocket();
         void __free(bool exists_clients = true);
-        void readMsg(int);
-        void writeMsg(int);
 };
 
 void getInformation(int);
