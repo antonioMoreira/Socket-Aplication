@@ -9,6 +9,17 @@ da camada OSI e as inferiores.
 Sockets são representados por um *file descriptor* determinados na sua criação, diferentemente de *pipes*
 podem realizar comunicação suportam comunicações entre processos não relacionados e,mais ainda, são
 o principal meio de comunicação entre máquinas diferentes.
+Quando um socket é criado devem-se ser especificados o estilo de comunicação que se deseja
+usar, o tipo de protocolo que será implementado e o endereço do socket (*namespace*).
+
+* Os estilo de comunicação podem ser:  
+  1. **SOCK_STREAM** : Estilo utilizdo neste programa.  
+  2. **SOCK_DGRAM**  
+  3. **SOCK_RAW**  
+
+Algumas siglas comuns encontradas são:  
+*PF_ : Protocol Family*  
+*AF_ : Address Family*
 >Neste programa foi implementado um socket usando os protocolos TCP/IP, sendo o protocolo IP o IPv4.
 
 ## IPv4 Header
@@ -64,3 +75,9 @@ $netstat -tpe
 tcp  0  0 xxx.xxx.xxx.xxx:41160  ec2-34-211-99-53.:https ESTABLISHED antonio  491685  8683/firefox
 tcp  0  0 xxx.xxx.xxx.xxx:55442  151.101.204.134:https   ESTABLISHED antonio  491034  8683/firefox
 ```
+
+## Fontes
+
+Fontes utilizadas para realização do trabalho:
+>The Linux Programming Interface.pdf
+>The GNU C Library Reference Manual.pdf
