@@ -69,7 +69,6 @@ class Socket{
 		sockaddr_in *getAddrSocket();
 };
 
-
 void writeMsg(int, char *);
 void readMsg(int, char *);
 void getInformation(int);
