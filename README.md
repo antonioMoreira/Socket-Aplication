@@ -78,6 +78,6 @@ tcp  0  0 xxx.xxx.xxx.xxx:55442  151.101.204.134:https   ESTABLISHED antonio  49
 
 ## Fontes
 
-Fontes utilizadas para realização do trabalho:
->The Linux Programming Interface.pdf
+Documentos utilizadas para realização do trabalho (*estão presentes nesta pasta*):
+>The Linux Programming Interface.pdf  
 >The GNU C Library Reference Manual.pdf
