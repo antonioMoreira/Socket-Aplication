@@ -226,7 +226,7 @@ void writeMsg(int fd, char *buffer){
 	 * @param int flag : flag que identifica ao tipo de trasmissão
 	 * 
 	 */
-	if((n = send(fd, buffer, strlen(buffer), MSG_DONTWAIT)) == -1)
+	if((n = send(fd, buffer, strlen(buffer), MSG_CONFIRM)) == -1)
 		getError("Error in send()");
 
 	printf("%d bytes write on buffer\n", n);
@@ -362,9 +362,9 @@ Socket::Socket(const char* port, in_addr_t addr, bool doBind){
 	 * 		Config3:	Para especificar a porta de comunicação do socket
 	 * 					htons() é usada para converter para NBO			
 	 */
-	add_socket->sin_addr.s_addr = addr; 	// Config1
-	add_socket->sin_family = AF_INET;		// Config2
-	add_socket->sin_port = htons(this->port);	   	// Config3
+	add_socket->sin_addr.s_addr = addr; 		// Config1
+	add_socket->sin_family = AF_INET;			// Config2
+	add_socket->sin_port = htons(this->port);	// Config3
 
 	if(doBind == true){
 		/**
