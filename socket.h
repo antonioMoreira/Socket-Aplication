@@ -18,12 +18,6 @@
 // essa biblio é pra usar a write e a read, mas a socket tem fç pra isso, então tem que mudar.
 
 
-#define EXIT_SUCCESS 0
-#define EXIT_FAILURE 1
-
-#define SOCKET_PATH '/home/antonio/Documents/Redes (Kalinka)/Trabalho' // pode usar pwd() na fç?
-
-
 // explicar todas as variáveis
 class Socket{
     private:
