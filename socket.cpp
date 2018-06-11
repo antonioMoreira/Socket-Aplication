@@ -143,7 +143,21 @@ int *Socket::getFdClients(){
 }
 
 
+/**
+ * @brief	Função que fecha o socket e sua respectiva porta e
+ * 			libera todas as estruturas relacionadas
+ * 
+ */
 void Socket::closeSocket(){
+	/**
+	 * @brief Fecha a comunicação do socket em questão
+	 * 
+	 * @param int fd : file descriptor do socket
+	 * 
+	 * @param int how : modo como deve ser finalizado.
+	 * 					Neste caso SHUT_RDWR deve é impedida a trasmissão e
+	 * 					recebimento de mensagens. 
+	 */
 	if(shutdown(fd_socket, SHUT_RDWR) == -1){
 		__free();
 		getError("Error in listen()");
@@ -151,12 +165,32 @@ void Socket::closeSocket(){
 }
 
 
+/**
+ * @brief	Função le uma mensagem do buffer especificado por um
+ * 			file descriptor
+ * 
+ * @param fd : file descriptor
+ * @param buffer : endereço do buffer
+ */
 void readMsg(int fd, char *buffer){
 	int n;
 
 	bzero(buffer, 256);
 	printf("Recebendo msg de [%d]\n", fd);
 
+	/**
+	 * @brief : recv(fd, buffer *, buffe_len, flag)
+	 * 			System call usada para receber uma mensagem de um socket.
+	 * 
+	 * @param int fd : 
+	 * 
+	 * @param char *buffer:
+	 * 
+	 * @param int size_buffer:
+	 * 
+	 * @param int flag:
+	 * 
+	 */
 	if((n = recv(fd, buffer, 256, MSG_PEEK)) == -1)
 		getError("Error in read()");
 
@@ -165,11 +199,13 @@ void readMsg(int fd, char *buffer){
 	bzero(buffer, 256);
 }
 
+
 /**
- * @brief Função escreve uma mensagem em fd
+ * @brief 	Função escreve uma mensagem no buffer especificado por um
+ * 			file descriptor.
  * 
- * @param fd 
- * @param buffer 
+ * @param fd
+ * @param buffer : endereço do buffer 
  */
 void writeMsg(int fd, char *buffer){
 	int n;
@@ -178,7 +214,20 @@ void writeMsg(int fd, char *buffer){
 	bzero(buffer, 256);
 	scanf("%s", buffer);
 
-	if((n = send(fd, buffer, strlen(buffer), MSG_PEEK)) == -1)
+	/**
+	 * @brief	send(fd, buffer *, size_buffer, flag)
+	 * 			System call usda para trasmitir uma mensagem para um socket.
+	 * 
+	 * @param int fd : file descriptor do socket que vai receber a mensagem
+	 * 
+	 * @param buffer * : endereço do buffer
+	 * 
+	 * @param int len_buffer : tamanho da mensagem a ser escrita (max msg : sizeof(buffer))
+	 * 
+	 * @param int flag : flag que identifica ao tipo de trasmissão 
+	 * 
+	 */
+	if((n = send(fd, buffer, strlen(buffer), MSG_DONTWAIT)) == -1)
 		getError("Error in send()");
 
 	printf("%d bytes write on buffer\n", n);
