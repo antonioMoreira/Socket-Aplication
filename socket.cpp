@@ -1,92 +1,4 @@
-/*
-	IPv4: Endereçamento de 32bits (RFC 791 and RFC 1122)
-		(!) Explicar todo o header do ipv4 (14 campos, sendo 13 obrigatórios)
-			|Version| |...| |Protocol| |...| |SourceIP_Addr| |DestIP_Addr| |14th Field(opcional)|
-			
-			Neste programa:
-				Version: 4
-				Protocol: 6 (TCP)
-
-
-	Sockets: Comunicação inter-processos.
-		Promover uma interface (API) entre a camada Aplicação e as inferiores
-		
-		Internet (TCP/IP):
-
-				Host 1									Host 2
-			→ Aplicação								→ Aplicação								 	
-				» Sockets  <-- Comunicação Lógica -->	» Sockets
-			→ Transporte							→ Transporte
-			→ Rede									→ Rede
-			→ Física/Enlace							→ Física/Enlace
-				|										|
-				---------- Comunicação Real -------------
-
-		→ Aplicação: HTTP, HTTPS, SSH, DNS, FTP, MQTT, SSL...
-		→ Transporte: TCP, UDP
-		→ Rede: IP, ICMP, ARP
-		→ Física: Ethernet, PPP, ADSL
-	
-	→ Port: 16bits~2Bytes para representar portanto 0~65535
-			- 0 	-> 1023	: Reservadas pela IANA
-			- 1024	-> 49151: Semi-reservedos (IANA)
-			- 49152 -> 65535: Clients Programs
-	
-
-	→ Sockets (OVERVIEW):
-		Quando você cria um socket, voce deve especificar o estilo de comunicação (style of communication) que você
-		deseja usar e o tipo de protocolo (protocol) que deseja implementar. 	
-		
-		→ Communication style: defines the user-level semantics of sending and receiving data of the socket
-		  Questões relacionadas
-		  		(1) Qual a unidade de dado de trasmissão?
-				(2) Dados podem ser perdidos durante a trasmissão? ie, deve ter garantia de recebimento?
-				(3) A comunicação é somente com um 'parceiro'?
-		Namespace : for naming the socket. A socket name (“address”) is meaningful only 
-					in the context of a particular namespace
-
-					Protocol Family PF_ : sulfix of every namespace symbolic name
-					Address  Family AF_ : sulfix of a corresponding symbolic name, designates the address format for that namespace 
-		
-		→ Protocols: Each protocol is valid for a particular namespace and communication style; a namespace is sometimes
-					 called a protocol family because of this, which is why the namespace names start with ‘PF_’.
-
-
-	→ Interface Naming
-		» lo :	loopback interface
-				comunicação client e server no mesmo host (usando TCP/IP)
-		
-		» virbr0 :	virtual bridge 0
-
-		» eth0 : Ethernet 0
-				
-
-
-
-	---------------------------------------------------------------------------------------------------------
-
-	» Configurações de rede	
-		$ netstat
-		$ ifconfig
-		$ telnet (?)
-		$ networkctl [OPTION]
-		$ /etc/init.d/network-mannager [OPTION] ↑ através do networkctl
-		
-	» Scan de Rede
-		$ wireshark
-		$ nmap
-		$ Sane : https://help.ubuntu.com/community/sane (é mais pra scan de hw)  
-
-	» SSH (/etc/init.d/ssh)
-		Clinet SSH → SSHD (deamon do SSH)
-					 $ ps -axl ("?" : diz a existência de deamons)
-		/etc/init.d/ssh status/stop/start/...
-		cat /etc/init.d/sshd_congig
-
-*/
-
 #include "socket.h"
-
 
 /**
  * @brief Função para informar corretamente o erro encontrado, 
@@ -143,7 +55,21 @@ int *Socket::getFdClients(){
 }
 
 
+/**
+ * @brief	Função que fecha o socket e sua respectiva porta e
+ * 			libera todas as estruturas relacionadas
+ * 
+ */
 void Socket::closeSocket(){
+	/**
+	 * @brief Fecha a comunicação do socket em questão
+	 * 
+	 * @param int fd : file descriptor do socket
+	 * 
+	 * @param int how : modo como deve ser finalizado.
+	 * 					Neste caso SHUT_RDWR deve é impedida a trasmissão e
+	 * 					recebimento de mensagens. 
+	 */
 	if(shutdown(fd_socket, SHUT_RDWR) == -1){
 		__free();
 		getError("Error in listen()");
@@ -151,40 +77,76 @@ void Socket::closeSocket(){
 }
 
 
-int readMsg(int fd, char *buffer){
-	int n, var;
+/**
+ * @brief	Função le uma mensagem do buffer especificado por um
+ * 			file descriptor
+ * 
+ * @param fd : file descriptor
+ * @param buffer : endereço do buffer
+ */
+void readMsg(int fd, char *buffer){
+	int n;
 
-	bzero(buffer, 256);
-	printf("Recebendo msg de [%d]\n", fd);
+	//bzero(buffer, 1);
+	*buffer = '\0';
+	//printf("Recebendo msg de [%d]\n", fd);
 
-	if((n = recv(fd, buffer, 256, MSG_PEEK)) == -1)
+	/**
+	 * @brief : recv(fd, buffer *, buffe_len, flag)
+	 * 			System call usada para receber uma mensagem de um socket.
+	 * 
+	 * @param int fd : file descriptor
+	 * 
+	 * @param char *buffer : endereço do buffer
+	 * 
+	 * @param int size_buffer : tamanho do buffer a ser lido
+	 * 
+	 * @param int flag : flag que identifica o tipo de recebimento
+	 * 
+	 */
+	if((n = recv(fd, buffer, 1, MSG_WAITALL)) == -1)
 		getError("Error in read()");
 
-	printf("%d bytes read from buffer\n", n);
-	printf("Msg: %s\n", buffer);
-	var = atoi(buffer);
-	bzero(buffer, 256);
-
-	return var;
+	//printf("%d bytes read from buffer\n", n);
+	printf("Msg: %c\n", *buffer);
+	//bzero(buffer, 1);
+	//*buffer = '\0';
 }
 
+
 /**
- * @brief Função escreve uma mensagem em fd
+ * @brief 	Função escreve uma mensagem no buffer especificado por um
+ * 			file descriptor.
  * 
- * @param fd 
- * @param buffer 
+ * @param fd
+ * @param buffer : endereço do buffer 
  */
 void writeMsg(int fd, char *buffer){
 	int n;
 
-	printf("Digite a mensagem em [%d]: \n", fd);
-	bzero(buffer, 256);
-	scanf("%s", buffer);
+	//printf("Digite a mensagem em [%d]: \n", fd);
+	//bzero(buffer, 1);
+	*buffer = '\0';
+	//scanf("%s", buffer); // se voltar a ser escanf mudar pra strlen
+	scanf("%c%*c", buffer);
 
-	if((n = send(fd, buffer, strlen(buffer), MSG_PEEK)) == -1)
+	/**
+	 * @brief	send(fd, buffer *, size_buffer, flag)
+	 * 			System call usda para trasmitir uma mensagem para um socket.
+	 * 
+	 * @param int fd : file descriptor do socket que vai receber a mensagem
+	 * 
+	 * @param buffer * : endereço do buffer
+	 * 
+	 * @param int len_buffer : tamanho da mensagem a ser escrita (max msg : sizeof(buffer))
+	 * 
+	 * @param int flag : flag que identifica ao tipo de trasmissão
+	 * 
+	 */
+	if((n = send(fd, buffer, sizeof(char), MSG_WAITALL)) == -1)
 		getError("Error in send()");
 
-	printf("%d bytes write on buffer\n", n);
+	//printf("%d bytes write on buffer\n", n);
 }
 
 
@@ -217,7 +179,7 @@ void Socket::acceptClients(int nclients){
 	 */
 	if(listen(fd_socket, nclients) == -1){
 		__free(false);
-		getError("Error in listen()");
+		getError("Error in listen()\n");
 	}
 
 	for(int i=0; i<nclients; i++){
@@ -247,9 +209,10 @@ void Socket::acceptClients(int nclients){
 }
 
 
-Socket::Socket(int port, in_addr_t addr, bool doBind){
+Socket::Socket(const char* port, in_addr_t addr, bool doBind){
 	add_socket = (struct sockaddr_in *)calloc(1, sizeof(sockaddr_in));
-	bzero(buffer, 256);
+	//bzero(buffer, 1);
+	buffer = '\0';
 
 	/**
 	 * @brief :	socket(domain, type, protocol)
@@ -285,10 +248,10 @@ Socket::Socket(int port, in_addr_t addr, bool doBind){
 	 * 
 	 * @return if( == -1) getError()
 	 * 		São feitas verificações nas invocações de funções de <socket.h>
-	172.26.146.8 * 		para ter certeza que as funções estão retornando valores esperados.
-	172.26.146.8 * 		Este if(), com a mesma finalidade, é realizado em diversas funções 
-	172.26.146.8 * 		a seguir, portanto a explicação dele será omitida posteriormente. 
-	172.26.146.8 * 		
+	 * 		para ter certeza que as funções estão retornando valores esperados.
+	 * 		Este if(), com a mesma finalidade, é realizado em diversas funções 
+	 * 		a seguir, portanto a explicação dele será omitida posteriormente. 
+	 * 		
 	 * 		Em caso de sucesso socket() retorna o fd, caso contrário retorna -1.
 	 * 		Neste último caso, getError() é invocada para obter mais informações do erro,
 	 * 		além disso, todos os ponteiros são devidamente liberados.
@@ -300,7 +263,7 @@ Socket::Socket(int port, in_addr_t addr, bool doBind){
 
 	printf("fd server: %d\n", fd_socket);
 
-	this->port = port;
+	this->port = atoi(port);
 
 	/**
 	 * @brief Configuração do socket
@@ -317,9 +280,9 @@ Socket::Socket(int port, in_addr_t addr, bool doBind){
 	 * 		Config3:	Para especificar a porta de comunicação do socket
 	 * 					htons() é usada para converter para NBO			
 	 */
-	add_socket->sin_addr.s_addr = addr; 	// Config1
-	add_socket->sin_family = AF_INET;		// Config2
-	add_socket->sin_port = htons(port);	   	// Config3
+	add_socket->sin_addr.s_addr = addr; 		// Config1
+	add_socket->sin_family = AF_INET;			// Config2
+	add_socket->sin_port = htons(this->port);  	// Config3
 
 	if(doBind == true){
 		/**

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+#include <ctime>
 
 #include "socket.h"
 #include "tictactoe.h"
@@ -8,33 +9,31 @@
 /* Board matrix */
 char square[10] = {'o','1','2','3','4','5','6','7','8','9'};
 
-int main(int argc, char const *argv[]){
-    Socket socket(9898, INADDR_ANY, true);
+int main(int argc, char const *argv[]){    
+    if(argc != 2){
+        printf("argc: %d\tMissing PORT number\n", argc);
+        exit(EXIT_FAILURE);
+    }
+    
+    Socket socket(argv[1], INADDR_ANY, true);
     socket.acceptClients(1);
 
-    printf("Server é o jogador 2\n");
+	printf("Server é o jogador 2\n");
 
     int player = 0,i,choice;
 	char mark;
 
 	do{
 		board(square);
-		cout << "Player " << player + 1 << ", enter a number:  \n";
 		if(player == 1){
-            printf("Sua vez\n");
-            writeMsg(socket.getFdClients()[0], socket.buffer);
-            choice = atoi(socket.buffer);
-			printf("Depois do write do server : %s", socket.buffer);
-			cin.ignore();
-			cin.get();
-			
+            printf("Sua vez digite uma posição\n");
+            writeMsg(socket.getFdClients()[0], &socket.buffer);
+            choice = atoi(&socket.buffer);
 		}else{
-            printf("Esperando jogador\n");
-            choice = readMsg(socket.getFdClients()[0], socket.buffer);
-            printf("Depois do read no server : choice = %d buff = %s", choice,socket.buffer);
-			cin.ignore();
-			cin.get();
-        }
+            printf("Esperando jogador...\n");
+            readMsg(socket.getFdClients()[0], &socket.buffer);
+            choice = atoi(&socket.buffer);
+		}
 
 		mark = (!player) ? 'X' : 'O'; 
 
@@ -44,8 +43,7 @@ int main(int argc, char const *argv[]){
 			player--;
 			cout<<"ERROR: Invalid Position";
 			/* Waiting for enter */
-			cin.ignore();
-			cin.get();
+			scanf("%*c");
 		}
 		player = (player+1) % 2;
 		i = check(square);
@@ -54,12 +52,11 @@ int main(int argc, char const *argv[]){
 	
 	board(square);
 	
-	i == 1 ? cout<<"\aPlayer: "<<(++player)%2 + 1<<" WON!!!" : cout<<"\aIts a draw!!!";
+	i == 1 ? cout<<"\aPlayer: "<<(++player)%2 + 1<<" WON!!!\n" : cout<<"\aIts a draw!!!";
 
 	/* Enter to quit */
-	cin.ignore();
-	cin.get();
-   
+	scanf("%*c");
+    
     socket.closeSocket();
 
     return 0;

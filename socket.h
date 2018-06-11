@@ -17,6 +17,9 @@
 #include <unistd.h> // Tirar essa biblio e substitui por alguma do socket.h se der
 // essa biblio é pra usar a write e a read, mas a socket tem fç pra isso, então tem que mudar.
 
+#define EXIT_SUCESS 0
+#define EXIT_FAILURE 1
+
 
 // explicar todas as variáveis
 class Socket{
@@ -51,10 +54,11 @@ class Socket{
         int fd_socket;
         int *fd_clients;
         int nclients, port;
-    public:
-		char buffer[256];
+    
+	public:
+		char buffer;
         
-		Socket(int, in_addr_t addr = INADDR_ANY, bool doBind = false);
+		Socket(const char *, in_addr_t addr = INADDR_ANY, bool doBind = false);
 
         
 		int getFdSocket();
@@ -65,9 +69,8 @@ class Socket{
 		sockaddr_in *getAddrSocket();
 };
 
-
 void writeMsg(int, char *);
-int readMsg(int, char *);
+void readMsg(int, char *);
 void getInformation(int);
 
 void getError();
