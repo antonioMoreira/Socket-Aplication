@@ -6,7 +6,7 @@
 using namespace std;
 
 /* FUNCTION TO DRAW BOARD OF TIC TAC TOE WITH PLAYERS MARK */
-void board(){
+void board(char square[]){
 	system("clear");
 	cout << "\n\n\tTic Tac Toe\n\n";
 
@@ -28,7 +28,7 @@ void board(){
 		0 if it was a draw
 		-1 if it's not over yet
 */
-int check(){
+int check(char square[]){
 	if (square[1] == square[2] && square[2] == square[3]) return 1;
 	else if (square[4] == square[5] && square[5] == square[6]) return 1;
 	else if (square[7] == square[8] && square[8] == square[9]) return 1;

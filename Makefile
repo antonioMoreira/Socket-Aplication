@@ -1,14 +1,14 @@
-all: socket.o tictactoe.o main.o client.o compile clean
+all: socket.o tictactoe.o server.o client.o compile clean
 
 compile:
-	@g++ socket.o main.o tictactoe.o -o exe -g -Wall
+	@g++ socket.o server.o tictactoe.o -o exe -g -Wall
 	@g++ socket.o client.o tictactoe.o -o exe2 -g -Wall
 
 fullcompile:
-	@g++ socket.o main.o -o exe  -g -Wall
+	@g++ socket.o server.o -o exe  -g -Wall
 
-main.o:
-	@g++ -c main.cpp
+server.o:
+	@g++ -c server.cpp
 
 client.o:
 	@g++ -c client.cpp

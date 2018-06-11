@@ -151,8 +151,8 @@ void Socket::closeSocket(){
 }
 
 
-void readMsg(int fd, char *buffer){
-	int n;
+int readMsg(int fd, char *buffer){
+	int n, var;
 
 	bzero(buffer, 256);
 	printf("Recebendo msg de [%d]\n", fd);
@@ -162,7 +162,10 @@ void readMsg(int fd, char *buffer){
 
 	printf("%d bytes read from buffer\n", n);
 	printf("Msg: %s\n", buffer);
+	var = atoi(buffer);
 	bzero(buffer, 256);
+
+	return var;
 }
 
 /**
@@ -282,10 +285,10 @@ Socket::Socket(int port, in_addr_t addr, bool doBind){
 	 * 
 	 * @return if( == -1) getError()
 	 * 		São feitas verificações nas invocações de funções de <socket.h>
-	 * 		para ter certeza que as funções estão retornando valores esperados.
-	 * 		Este if(), com a mesma finalidade, é realizado em diversas funções 
-	 * 		a seguir, portanto a explicação dele será omitida posteriormente. 
-	 * 		
+	172.26.146.8 * 		para ter certeza que as funções estão retornando valores esperados.
+	172.26.146.8 * 		Este if(), com a mesma finalidade, é realizado em diversas funções 
+	172.26.146.8 * 		a seguir, portanto a explicação dele será omitida posteriormente. 
+	172.26.146.8 * 		
 	 * 		Em caso de sucesso socket() retorna o fd, caso contrário retorna -1.
 	 * 		Neste último caso, getError() é invocada para obter mais informações do erro,
 	 * 		além disso, todos os ponteiros são devidamente liberados.

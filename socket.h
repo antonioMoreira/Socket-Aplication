@@ -67,7 +67,7 @@ class Socket{
 
 
 void writeMsg(int, char *);
-void readMsg(int, char *);
+int readMsg(int, char *);
 void getInformation(int);
 
 void getError();

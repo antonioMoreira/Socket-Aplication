@@ -6,6 +6,9 @@
 #include "socket.h"
 #include "tictactoe.h"
 
+/* Board matrix */
+char square[10] = {'o','1','2','3','4','5','6','7','8','9'};
+
 //hostent definition:
 //https://msdn.microsoft.com/en-us/library/windows/desktop/ms738552(v=vs.85).aspx
 
@@ -28,20 +31,27 @@ int main(int argc, char const *argv[]){
 	char mark;
 
 	do{
-		board();
-		cout << "Player " << player + 1 << ", enter a number:  ";
+		board(square);
+		cout << "Player " << player + 1 << ", enter a number:  \n";
+		mark = (!player) ? 'X' : 'O'; 
+
 		if(player == 0){
             printf("Sua vez");
             writeMsg(s_client.getFdSocket(), s_client.buffer);
             choice = atoi(s_client.buffer);
+			printf("Depois do write do cliente : %d\n", choice);
+			cin.ignore();
+			cin.get();
         }else{
             printf("Esperando jogador");
             readMsg(s_client.getFdSocket(), s_client.buffer);
-            choice = atoi(s_client.buffer);
+			choice = atoi(s_client.buffer);
+			printf("Depois do read do cliente : %d\n", choice);
+			cin.ignore();
+			cin.get();
         }
 
-		mark = (!player) ? 'X' : 'O'; 
-
+		
 		if(isdigit(square[choice])){
 			square[choice] = mark;
 		}else{
@@ -52,11 +62,11 @@ int main(int argc, char const *argv[]){
 			cin.get();
 		}
 		player = (player+1) % 2;
-		i = check();
+		i = check(square);
 		
 	}while(i == -1);
 	
-	board();
+	board(square);
 	
 	i == 1 ? cout<<"\aPlayer: "<<(++player)%2 + 1<<" WON!!!" : cout<<"\aIts a draw!!!";
 
