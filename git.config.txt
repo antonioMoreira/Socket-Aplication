@@ -1,7 +1,0 @@
- git clone git@github.com:antonioMoreira/Socket-Aplication.git
- cd Socket-Aplication/
- git checkout antonio_1 
- git status 
- git add .
- git commit -m "Atualizando..."
- git push
