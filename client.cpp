@@ -30,7 +30,7 @@ int main(int argc, char const *argv[]){
 
     while(1){
         writeMsg(s_client.getFdSocket(), s_client.buffer);
-        sleep(1);
+        //sleep(1);
         readMsg(s_client.getFdSocket(), s_client.buffer);
     }
     return 0;

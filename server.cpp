@@ -17,7 +17,7 @@ int main(int argc, char const *argv[]){
     socket.acceptClients(1);
 
     while(1){
-        sleep(1);
+        //sleep(1);
         readMsg(socket.getFdClients()[0], socket.buffer);
         writeMsg(socket.getFdClients()[0], socket.buffer);
     }
