@@ -124,7 +124,7 @@ void readMsg(int fd, char *buffer){
 void writeMsg(int fd, char *buffer){
 	int n;
 
-	printf("Digite a mensagem em [%d]: \n", fd);
+	//printf("Digite a mensagem em [%d]: \n", fd);
 	//bzero(buffer, 1);
 	*buffer = '\0';
 	//scanf("%s", buffer); // se voltar a ser escanf mudar pra strlen
