@@ -14,7 +14,7 @@ int main(int argc, char const *argv[]){
         exit(EXIT_FAILURE);
     }
     
-    struct hostent *server; //colocar em socket
+    struct hostent *server;
     struct sockaddr_in *addr_server = (struct sockaddr_in *)calloc(1,sizeof(struct sockaddr_in));
 
     if((server = gethostbyname(argv[2])) == NULL){
@@ -25,11 +25,13 @@ int main(int argc, char const *argv[]){
 
     if(connect(s_client.getFdSocket(), (struct sockaddr *)s_client.getAddrSocket(), sizeof(struct sockaddr_in)) == -1){
         printf("Erro conncet(): %d", errno);
-        return -1;        
+        return -1;
     }
 
-    writeMsg(s_client.getFdSocket(), s_client.buffer);
-    readMsg(s_client.getFdSocket(), s_client.buffer);
-
+    while(1){
+        writeMsg(s_client.getFdSocket(), s_client.buffer);
+        sleep(1);
+        readMsg(s_client.getFdSocket(), s_client.buffer);
+    }
     return 0;
 }

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctime>
 
 #include "socket.h"
 
@@ -13,8 +14,11 @@ int main(int argc, char const *argv[]){
     Socket socket(argv[1], INADDR_ANY, true);
     socket.acceptClients(1);
 
-    readMsg(socket.getFdClients()[0], socket.buffer);
-    writeMsg(socket.getFdClients()[0], socket.buffer);
+    while(1){
+        sleep(1);
+        readMsg(socket.getFdClients()[0], socket.buffer);
+        writeMsg(socket.getFdClients()[0], socket.buffer);
+    }
 
     socket.closeSocket();
 
