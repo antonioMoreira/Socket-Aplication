@@ -153,12 +153,14 @@ void Socket::closeSocket(){
 void readMsg(int fd, char *buffer){
 	int n;
 
+	bzero(buffer, 256);
+	printf("Recebendo msg de [%d]\n", fd);
 	//if((n = read(fd, buffer, 255)) == -1)
 	//	getError("Error in read()");
-
-	if((n = recv(fd, buffer, 256, MSG_DONTWAIT)) == -1)
-		getError("Error in read()");
 	
+	if((n = recv(fd, buffer, 256, MSG_PEEK)) == -1)
+		getError("Error in read()");
+
 	printf("%d bytes read from buffer\n", n);
 	printf("Msg: %s\n", buffer);
 	bzero(buffer, 256);
@@ -172,16 +174,16 @@ void writeMsg(int fd, char *buffer){
 
 	printf("Digite a mensagem em [%d]: \n", fd);
 	bzero(buffer, 256);
-	//scanf("%s", buffer);
+	scanf("%s", buffer);
 	//memcpy(buffer, &msg, strlen(msg)); 
-	fgets(buffer,255,stdin);
+	//fgets(buffer,255,stdin);
 	
 	//	acho que não é uma boa prática escrever direto no buffer, além disso
 	//	não precisa ficar zerando toda hora o buffer, ACHO
-	//if((n = write(fd, buffer, strlen(buffer))))
+	//if((n = write(fd, buffer, strlen(buffer))) == -1)
 	//	getError("Error in write()");
 
-	if((n = send(fd, buffer, strlen(buffer), MSG_DONTWAIT)) == -1)
+	if((n = send(fd, buffer, strlen(buffer), MSG_PEEK)) == -1)
 		getError("Error in send()");
 
 	printf("%d bytes write on buffer\n", n);
