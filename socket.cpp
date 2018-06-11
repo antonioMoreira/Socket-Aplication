@@ -263,7 +263,7 @@ void Socket::acceptClients(int nclients){
 	 */
 	if(listen(fd_socket, nclients) == -1){
 		__free(false);
-		getError("Error in listen()");
+		getError("Error in listen()\n");
 	}
 
 	for(int i=0; i<nclients; i++){
