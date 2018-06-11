@@ -1,8 +1,8 @@
-all: socket.o tiktaktoe.o main.o client.o compile clean
+all: socket.o main.o client.o compile clean
 
 compile:
-	@g++ socket.o main.o tiktaktoe.o -o exe -g -Wall
-	@g++ socket.o client.o tiktaktoe.o -o exe2 -g -Wall
+	@g++ socket.o main.o -o exe -g -Wall
+	@g++ socket.o client.o -o exe2 -g -Wall
 
 fullcompile:
 	@g++ socket.o main.o -o exe  -g -Wall
@@ -16,13 +16,10 @@ client.o:
 socket.o:
 	@g++ -c socket.cpp
 
-tiktaktoe.o:
-	@g++ -c tiktaktoe.cpp
-
-run1:
+run1: 
 	./exe
 
-run2:
+run2: 
 	./exe2
 
 fullrun:

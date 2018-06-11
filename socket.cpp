@@ -182,13 +182,13 @@ void readMsg(int fd, char *buffer){
 	 * @brief : recv(fd, buffer *, buffe_len, flag)
 	 * 			System call usada para receber uma mensagem de um socket.
 	 * 
-	 * @param int fd : 
+	 * @param int fd : file descriptor
 	 * 
-	 * @param char *buffer:
+	 * @param char *buffer : endereço do buffer
 	 * 
-	 * @param int size_buffer:
+	 * @param int size_buffer : tamanho do buffer a ser lido
 	 * 
-	 * @param int flag:
+	 * @param int flag : flag que identifica o tipo de recebimento
 	 * 
 	 */
 	if((n = recv(fd, buffer, 256, MSG_PEEK)) == -1)
@@ -196,7 +196,6 @@ void readMsg(int fd, char *buffer){
 
 	printf("%d bytes read from buffer\n", n);
 	printf("Msg: %s\n", buffer);
-	bzero(buffer, 256);
 }
 
 
@@ -224,7 +223,7 @@ void writeMsg(int fd, char *buffer){
 	 * 
 	 * @param int len_buffer : tamanho da mensagem a ser escrita (max msg : sizeof(buffer))
 	 * 
-	 * @param int flag : flag que identifica ao tipo de trasmissão 
+	 * @param int flag : flag que identifica ao tipo de trasmissão
 	 * 
 	 */
 	if((n = send(fd, buffer, strlen(buffer), MSG_DONTWAIT)) == -1)
@@ -293,7 +292,7 @@ void Socket::acceptClients(int nclients){
 }
 
 
-Socket::Socket(int port, in_addr_t addr, bool doBind){
+Socket::Socket(const char* port, in_addr_t addr, bool doBind){
 	add_socket = (struct sockaddr_in *)calloc(1, sizeof(sockaddr_in));
 	bzero(buffer, 256);
 
@@ -346,7 +345,7 @@ Socket::Socket(int port, in_addr_t addr, bool doBind){
 
 	printf("fd server: %d\n", fd_socket);
 
-	this->port = port;
+	this->port = atoi(port);
 
 	/**
 	 * @brief Configuração do socket
@@ -365,7 +364,7 @@ Socket::Socket(int port, in_addr_t addr, bool doBind){
 	 */
 	add_socket->sin_addr.s_addr = addr; 	// Config1
 	add_socket->sin_family = AF_INET;		// Config2
-	add_socket->sin_port = htons(port);	   	// Config3
+	add_socket->sin_port = htons(this->port);	   	// Config3
 
 	if(doBind == true){
 		/**

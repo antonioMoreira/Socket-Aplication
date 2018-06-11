@@ -58,7 +58,7 @@ class Socket{
 	public:
 		char buffer[256];
         
-		Socket(int, in_addr_t addr = INADDR_ANY, bool doBind = false);
+		Socket(const char *, in_addr_t addr = INADDR_ANY, bool doBind = false);
 
         
 		int getFdSocket();
