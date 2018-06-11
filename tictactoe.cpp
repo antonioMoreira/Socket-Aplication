@@ -1,18 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-
-
-#define clear() printf("\033[H\033[J")
+#include "tictactoe.h"
 
 using namespace std;
 
-char square[10] = {'o','1','2','3','4','5','6','7','8','9'};
-
-/*******************************************************************
-     FUNCTION TO DRAW BOARD OF TIC TAC TOE WITH PLAYERS MARK
-********************************************************************/
-
+/* FUNCTION TO DRAW BOARD OF TIC TAC TOE WITH PLAYERS MARK */
 void board(){
 	system("clear");
 	cout << "\n\n\tTic Tac Toe\n\n";
@@ -29,11 +22,11 @@ void board(){
 	cout << "     |     |     \n\n";
 }
 
-/*
-	FUNCTION TO RETURN GAME STATUS
-	1 FOR GAME IS OVER WITH RESULT
-	-1 FOR GAME IS IN PROGRESS
-	O GAME IS OVER AND NO RESULT
+/* Function that checks if the game is over
+   returns:
+		1 if somebody won
+		0 if it was a draw
+		-1 if it's not over yet
 */
 int check(){
 	if (square[1] == square[2] && square[2] == square[3]) return 1;
@@ -50,67 +43,38 @@ int check(){
 	else return -1;
 }
 
-int main(int argc, char const *argv[]){
-	int player = 1,i,choice;
+/*
+int game(){
+	int player = 0,i,choice;
 	char mark;
 
 	do{
 		board();
-		player = (player%2) ? 1 : 2;
-
-		cout << "Player " << player << ", enter a number:  ";
+		cout << "Player " << player + 1 << ", enter a number:  ";
 		cin >> choice;
 
-		mark=(player == 1) ? 'X' : 'O';
+		mark = (!player) ? 'X' : 'O'; 
 
-		if (choice == 1 && square[1] == '1')
-
-			square[1] = mark;
-		else if (choice == 2 && square[2] == '2')
-
-			square[2] = mark;
-		else if (choice == 3 && square[3] == '3')
-
-			square[3] = mark;
-		else if (choice == 4 && square[4] == '4')
-
-			square[4] = mark;
-		else if (choice == 5 && square[5] == '5')
-
-			square[5] = mark;
-		else if (choice == 6 && square[6] == '6')
-
-			square[6] = mark;
-		else if (choice == 7 && square[7] == '7')
-
-			square[7] = mark;
-		else if (choice == 8 && square[8] == '8')
-
-			square[8] = mark;
-		else if (choice == 9 && square[9] == '9')
-
-			square[9] = mark;
-		else{
-			cout<<"Invalid move ";
-
+		if(isdigit(square[choice])){
+			square[choice] = mark;
+		}else{
 			player--;
+			cout<<"ERROR: Invalid Position";
+			
 			cin.ignore();
 			cin.get();
 		}
-		i=check();
-
-		player++;
-	}while(i==-1);
+		player = (player+1) % 2;
+		i = check();
+		
+	}while(i == -1);
 	
 	board();
 	
-
-	if(i==1)	cout<<"==>\aPlayer "<<--player<<" win ";
-	else
-		cout<<"==>\aGame draw";
+	i == 1 ? cout<<"\aPlayer: "<<(++player)%2 + 1<<" WON!!!" : cout<<"\aIts a draw!!!";
 
 	cin.ignore();
 	cin.get();
 
 	return 0;
-}
+}*/
