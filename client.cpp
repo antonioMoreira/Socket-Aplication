@@ -31,20 +31,19 @@ int main(int argc, char const *argv[]){
         return -1;
     }
 
-    //while(1){
+    while(1){
+        writeMsg(s_client.getFdSocket(), &s_client.buffer);
+        //sleep(1);
+        readMsg(s_client.getFdSocket(), &s_client.buffer);
+    }
+
+
+
+    //do{
+    //    board(square);
+    //    printf("É a sua vez: \n");
     //    writeMsg(s_client.getFdSocket(), s_client.buffer);
-    //    //sleep(1);
-    //    readMsg(s_client.getFdSocket(), s_client.buffer);
-    //}
-
-    do{
-        board(square);
-        printf("É a sua vez: \n");
-        writeMsg(s_client.getFdSocket(), s_client.buffer);
-        
-
-
-    }while(check(square) == -1);
+    //}while(check(square) == -1);
 
 
 

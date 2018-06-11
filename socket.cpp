@@ -87,7 +87,8 @@ void Socket::closeSocket(){
 void readMsg(int fd, char *buffer){
 	int n;
 
-	bzero(buffer, 4);
+	//bzero(buffer, 1);
+	*buffer = '\0';
 	//printf("Recebendo msg de [%d]\n", fd);
 
 	/**
@@ -103,12 +104,13 @@ void readMsg(int fd, char *buffer){
 	 * @param int flag : flag que identifica o tipo de recebimento
 	 * 
 	 */
-	if((n = recv(fd, buffer, 4, MSG_WAITALL)) == -1)
+	if((n = recv(fd, buffer, 1, MSG_WAITALL)) == -1)
 		getError("Error in read()");
 
 	//printf("%d bytes read from buffer\n", n);
-	printf("Msg: %s\n", buffer);
-	bzero(buffer, 4);
+	printf("Msg: %c\n", *buffer);
+	//bzero(buffer, 1);
+	*buffer = '\0';
 }
 
 
@@ -123,8 +125,10 @@ void writeMsg(int fd, char *buffer){
 	int n;
 
 	printf("Digite a mensagem em [%d]: \n", fd);
-	bzero(buffer, 4);
-	scanf("%s", buffer);
+	//bzero(buffer, 1);
+	*buffer = '\0';
+	//scanf("%s", buffer); // se voltar a ser escanf mudar pra strlen
+	scanf("%c", buffer);
 
 	/**
 	 * @brief	send(fd, buffer *, size_buffer, flag)
@@ -139,7 +143,7 @@ void writeMsg(int fd, char *buffer){
 	 * @param int flag : flag que identifica ao tipo de trasmissão
 	 * 
 	 */
-	if((n = send(fd, buffer, strlen(buffer), MSG_WAITALL)) == -1)
+	if((n = send(fd, buffer, sizeof(char), MSG_WAITALL)) == -1)
 		getError("Error in send()");
 
 	//printf("%d bytes write on buffer\n", n);
@@ -207,7 +211,8 @@ void Socket::acceptClients(int nclients){
 
 Socket::Socket(const char* port, in_addr_t addr, bool doBind){
 	add_socket = (struct sockaddr_in *)calloc(1, sizeof(sockaddr_in));
-	bzero(buffer, 4);
+	//bzero(buffer, 1);
+	buffer = '\0';
 
 	/**
 	 * @brief :	socket(domain, type, protocol)

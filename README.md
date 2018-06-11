@@ -31,7 +31,7 @@ Version(4bits) | ... | Protocol(1Bytes) | ... | Source IP (4Bytes) | Destination
 
 ## Port : Definições de portas
 
-As são definidas por 2Bytes, portanto $2^{16}$ possibilidades de portas. Contudo existem portas reservadas
+As portas são definidas por 2Bytes, portanto $2^{16}$ possibilidades de portas. Contudo existem portas reservadas
 pela IANA e não é uma boa prática utilizá-las, são elas:  
 >0 → 1023 : Reservadas.  
 >1024 → 49151 : Semi-Reservadas.  

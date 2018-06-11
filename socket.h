@@ -56,7 +56,7 @@ class Socket{
         int nclients, port;
     
 	public:
-		char buffer[4];
+		char buffer;
         
 		Socket(const char *, in_addr_t addr = INADDR_ANY, bool doBind = false);
 
