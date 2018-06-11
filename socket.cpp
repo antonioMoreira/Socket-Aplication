@@ -137,6 +137,10 @@ int Socket::getFdSocket() {
 	return fd_socket;
 }
 
+int *Socket::getFdClients(){
+	return fd_clients;
+}
+
 
 void Socket::closeSocket(){
 	if(shutdown(fd_socket, SHUT_RDWR) == -1){
