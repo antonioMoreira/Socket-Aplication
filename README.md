@@ -20,7 +20,23 @@ usar, o tipo de protocolo que será implementado e o endereço do socket (*names
 Algumas siglas comuns encontradas são:  
 *PF_ : Protocol Family*  
 *AF_ : Address Family*
+
 >Neste programa foi implementado um socket usando os protocolos TCP/IP, sendo o protocolo IP o IPv4.
+
+## Socket.h e outras bibliotecas
+
+Para realização deste socket, além das bibliotecas comuns de C e C++, como *stdio.h*, *stdlib.h*, *strings.h*
+foi utilizada a biblioteca *sys/socket.h* e suas dependências.
+Esta biblioteca trata internamente arquiteturas de computadores diferentes no sentido de
+endereçamento, para isso a classe de bibliotecas de *bits* é incluída. Todas as definições de cada função e estruturas de dados relacionadas
+utilizada de *socket* são específicadas no código como comentário.  
+Para localizar o host através do seu endereço IP foi utilizada a função *gethostbyname()* esta função está
+em *netdb.h*, por isso esta biblioteca foi incluída.
+
+## TicTacToe :  Jogo Da velha
+
+O software descrito neste documento utiliza do mecanismo de sockets para realizar a comunicação
+entre dois processos que executam o jogo Tic-Tac-Toe (jogo da velha).
 
 ## IPv4 Header
 
@@ -31,8 +47,8 @@ Version(4bits) | ... | Protocol(1Bytes) | ... | Source IP (4Bytes) | Destination
 
 ## Port : Definições de portas
 
-As portas são definidas por 2Bytes, portanto $2^{16}$ possibilidades de portas. Contudo existem portas reservadas
-pela IANA e não é uma boa prática utilizá-las, são elas:  
+As portas são definidas por 2Bytes, portanto 65536 possibilidades de portas. Contudo existem portas reservadas
+pela IANA (*Internet Assigned Numbers Authority*) e não é uma boa prática utilizá-las, são elas:  
 >0 → 1023 : Reservadas.  
 >1024 → 49151 : Semi-Reservadas.  
 >49152 → 65535 : Aplicações em geral.
@@ -81,3 +97,9 @@ tcp  0  0 xxx.xxx.xxx.xxx:55442  151.101.204.134:https   ESTABLISHED antonio  49
 Documentos utilizadas para realização do trabalho (*estão presentes nesta pasta*):
 >The Linux Programming Interface.pdf  
 >The GNU C Library Reference Manual.pdf
+
+## Alunos
+
+Antonio Moreira - **9779242**  
+Leonardo Meireles Murtha Oliveira - **4182085**  
+Vitor Augusto Henrique Brisola - **9791292**

@@ -6,22 +6,19 @@
 #include <string.h>
 
 #include <sys/socket.h>
-#include <sys/types.h> // acho que nao precisa deste include
+#include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <errno.h>
 
-//Biblios que fogem um pouco do negocio ↓ (que tem tudo na socket.h)
 #include <strings.h>
 #include <netdb.h> //tentar tirar e colocar gethostbyaddr
-#include <unistd.h> // Tirar essa biblio e substitui por alguma do socket.h se der
-// essa biblio é pra usar a write e a read, mas a socket tem fç pra isso, então tem que mudar.
+#include <unistd.h> 
 
 #define EXIT_SUCESS 0
 #define EXIT_FAILURE 1
 
 
-// explicar todas as variáveis
 class Socket{
     private:
         /**

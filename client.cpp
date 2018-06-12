@@ -6,9 +6,6 @@
 #include "socket.h"
 #include "tictactoe.h"
 
-//hostent definition:
-//https://msdn.microsoft.com/en-us/library/windows/desktop/ms738552(v=vs.85).aspx
-
 /* Board matrix */
 char square[10] = {'o','1','2','3','4','5','6','7','8','9'};
 
@@ -37,7 +34,6 @@ int main(int argc, char const *argv[]){
 
 	do{
 		board(square);
-		//cout << "Player " << player + 1 << ", enter a number:  \n";
 		mark = (!player) ? 'X' : 'O'; 
 
 		if(player == 0){
@@ -45,7 +41,7 @@ int main(int argc, char const *argv[]){
             writeMsg(s_client.getFdSocket(), &s_client.buffer);
             choice = atoi(&s_client.buffer);
 		}else{
-            printf("Esperando jogador...\n");
+            printf("Esperando vez do outro jogador...\n");
             readMsg(s_client.getFdSocket(), &s_client.buffer);
 			choice = atoi(&s_client.buffer);
 		}

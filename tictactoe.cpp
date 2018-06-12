@@ -42,39 +42,3 @@ int check(char square[]){
 			 square[7] != '7' && square[8] != '8' && square[9] != '9') return 0;
 	else return -1;
 }
-
-/*
-int game(){
-	int player = 0,i,choice;
-	char mark;
-
-	do{
-		board();
-		cout << "Player " << player + 1 << ", enter a number:  ";
-		cin >> choice;
-
-		mark = (!player) ? 'X' : 'O'; 
-
-		if(isdigit(square[choice])){
-			square[choice] = mark;
-		}else{
-			player--;
-			cout<<"ERROR: Invalid Position";
-			
-			cin.ignore();
-			cin.get();
-		}
-		player = (player+1) % 2;
-		i = check();
-		
-	}while(i == -1);
-	
-	board();
-	
-	i == 1 ? cout<<"\aPlayer: "<<(++player)%2 + 1<<" WON!!!" : cout<<"\aIts a draw!!!";
-
-	cin.ignore();
-	cin.get();
-
-	return 0;
-}*/

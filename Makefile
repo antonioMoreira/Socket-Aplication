@@ -37,4 +37,4 @@ clean:
 	@rm *.o
 
 zip:
-	zip -r *.cpp *.h Makefile *.md *.pdf
+	zip -r Socket *.cpp *.h Makefile *.md *.pdf

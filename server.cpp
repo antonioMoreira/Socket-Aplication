@@ -30,7 +30,7 @@ int main(int argc, char const *argv[]){
             writeMsg(socket.getFdClients()[0], &socket.buffer);
             choice = atoi(&socket.buffer);
 		}else{
-            printf("Esperando jogador...\n");
+            printf("Esperando vez do outro jogador...\n");
             readMsg(socket.getFdClients()[0], &socket.buffer);
             choice = atoi(&socket.buffer);
 		}

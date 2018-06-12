@@ -107,10 +107,7 @@ void readMsg(int fd, char *buffer){
 	if((n = recv(fd, buffer, 1, MSG_WAITALL)) == -1)
 		getError("Error in read()");
 
-	//printf("%d bytes read from buffer\n", n);
 	printf("Msg: %c\n", *buffer);
-	//bzero(buffer, 1);
-	//*buffer = '\0';
 }
 
 
